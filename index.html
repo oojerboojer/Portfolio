@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eugene Lulu — Automation VA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0D1117;
+    --panel: #141B24;
+    --panel-2: #101720;
+    --line: #232C38;
+    --text: #E7EAEE;
+    --text-dim: #93A0AF;
+    --amber: #FFB238;
+    --teal: #4FD8C4;
+    --rail: 26px;
+    --maxw: 780px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3 { font-family: 'Space Grotesk', sans-serif; margin: 0; font-weight: 600; }
+  p { margin: 0; color: var(--text-dim); max-width: 62ch; }
+  a { color: var(--amber); }
+  code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+
+  /* ---------- layout shell ---------- */
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(13,17,23,0.86);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav__inner {
+    max-width: 980px; margin: 0 auto; padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav__brand { display:flex; align-items:center; gap:10px; font-family:'Space Grotesk'; font-weight:600; font-size:15px; }
+  .nav__dot { width:8px; height:8px; border-radius:50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); flex-shrink:0; }
+  .nav__links { display:flex; gap:28px; list-style:none; margin:0; padding:0; }
+  .nav__links a { color: var(--text-dim); text-decoration:none; font-size:14px; transition: color .15s; }
+  .nav__links a:hover { color: var(--text); }
+  .nav__cta {
+    color: var(--bg) !important; background: var(--amber); padding: 8px 16px;
+    border-radius: 4px; font-size: 14px; font-weight:600; text-decoration:none;
+  }
+  @media (max-width: 680px){ .nav__links { display:none; } }
+
+  /* ---------- the trace / pipeline rail ---------- */
+  .pipeline { position: relative; }
+  .pipeline::before{
+    content:'';
+    position:absolute; top:0; bottom:0; left: var(--rail);
+    width: 2px; background: var(--line);
+  }
+  section { position: relative; padding: 96px 0 96px calc(var(--rail) + 40px); }
+  section .wrap-inner { max-width: var(--maxw); }
+  .marker{
+    position:absolute; top: 100px; left: var(--rail); transform: translateX(-50%);
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--amber);
+    z-index: 2;
+  }
+  .marker--teal { border-color: var(--teal); }
+  @media (max-width: 680px){
+    :root{ --rail: 16px; }
+    section { padding: 72px 0 72px calc(var(--rail) + 24px); }
+    .wrap { padding: 0 20px; }
+  }
+
+  .eyebrow { color: var(--text-dim); font-size: 13px; margin-bottom: 14px; font-family: 'JetBrains Mono'; }
+  .eyebrow .n { color: var(--amber); }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding-top: 120px;
+    background:
+      radial-gradient(1px 1px at 20% 30%, var(--line) 1px, transparent 0),
+      radial-gradient(1px 1px at 60% 70%, var(--line) 1px, transparent 0),
+      radial-gradient(1px 1px at 80% 20%, var(--line) 1px, transparent 0);
+    background-size: 140px 140px;
+  }
+  .hero__title {
+    font-size: clamp(34px, 5.2vw, 54px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    max-width: 14ch;
+  }
+  .hero__sub { margin-top: 22px; font-size: 17px; max-width: 52ch; }
+  .hero__actions { margin-top: 34px; display:flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display:inline-block; padding: 12px 22px; border-radius: 4px;
+    font-weight: 600; font-size: 14px; text-decoration:none; transition: transform .15s, background .15s, border-color .15s;
+  }
+  .btn--primary { background: var(--amber); color: var(--bg); }
+  .btn--primary:hover { transform: translateY(-1px); }
+  .btn--ghost { color: var(--text); border: 1px solid var(--line); }
+  .btn--ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+  .hero__diagram { margin-top: 64px; }
+  .hero__diagram svg { width: 100%; height: auto; display:block; }
+  .node-label { font-family: 'JetBrains Mono'; font-size: 12px; fill: var(--text-dim); }
+  .node-label.strong { fill: var(--text); }
+
+  @media (prefers-reduced-motion: no-preference){
+    .pulse { animation: pulse-op 2.4s ease-in-out infinite; }
+    @keyframes pulse-op { 0%,100%{opacity:.35} 50%{opacity:1} }
+  }
+
+  /* ---------- about ---------- */
+  .about__grid { display:grid; grid-template-columns: 1fr; gap: 28px; }
+  .about p + p { margin-top: 16px; }
+  .about__facts {
+    margin-top: 28px; display:grid; grid-template-columns: repeat(3,1fr); gap: 20px;
+    border-top: 1px solid var(--line); padding-top: 24px;
+  }
+  .fact__icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: var(--panel-2); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; margin-bottom: 12px;
+  }
+  .fact__icon img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+  .fact__num { font-family:'Space Grotesk'; font-size: 22px; color: var(--amber); }
+  .fact__label { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+  @media (max-width: 560px){ .about__facts{ grid-template-columns: 1fr 1fr; } }
+
+  /* ---------- services ---------- */
+  .services__grid { display:grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 8px; }
+  .service {
+    background: var(--panel); padding: 26px; transition: background .15s;
+  }
+  .service:hover { background: var(--panel-2); }
+  .service__icon { width: 26px; height: 26px; color: var(--teal); margin-bottom: 16px; }
+  .service h3 { font-size: 17px; margin-bottom: 8px; }
+  .service p { font-size: 14.5px; }
+  @media (max-width: 640px){ .services__grid { grid-template-columns: 1fr; } }
+
+  /* ---------- process ---------- */
+  .process__list { margin-top: 8px; display:flex; flex-direction:column; }
+  .step {
+    display:grid; grid-template-columns: 44px 1fr; gap: 20px;
+    padding: 22px 0; border-top: 1px solid var(--line);
+    opacity: 0.4; transition: opacity .4s ease;
+  }
+  .step.in-view { opacity: 1; }
+  .step:last-child { border-bottom: 1px solid var(--line); }
+  .step__num { font-family:'JetBrains Mono'; color: var(--amber); font-size: 14px; padding-top:2px; }
+  .step h3 { font-size: 16px; margin-bottom: 4px; }
+  .step p { font-size: 14.5px; }
+
+  /* ---------- skills ---------- */
+  .skills__grid { display:grid; grid-template-columns: 1.2fr 1fr; gap: 36px; margin-top: 8px; }
+  .terminal {
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
+    padding: 20px 22px; font-family:'JetBrains Mono'; font-size: 13.5px;
+  }
+  .terminal__line { padding: 5px 0; color: var(--text-dim); }
+  .terminal__key { color: var(--teal); }
+  .terminal__val { color: var(--text); }
+  .tags { display:flex; flex-wrap:wrap; gap: 10px; align-content:flex-start; }
+  .tag { border: 1px solid var(--line); color: var(--text-dim); font-size: 13px; padding: 7px 12px; border-radius: 4px; }
+  @media (max-width: 680px){ .skills__grid { grid-template-columns: 1fr; } }
+
+  /* ---------- experience ---------- */
+  .xp { padding-bottom: 30px; }
+  .xp:last-child { padding-bottom: 0; }
+  .xp__head { display:flex; justify-content:space-between; align-items:baseline; gap: 16px; flex-wrap: wrap; }
+  .xp__role { font-size: 17px; }
+  .xp__org { color: var(--teal); font-size: 14px; margin-top: 2px; }
+  .xp__date { font-family:'JetBrains Mono'; font-size: 12.5px; color: var(--text-dim); white-space:nowrap; }
+  .xp ul { margin: 14px 0 0; padding-left: 18px; }
+  .xp li { color: var(--text-dim); font-size: 14.5px; margin-bottom: 8px; }
+  .xp li::marker { color: var(--amber); }
+
+  /* ---------- work samples ---------- */
+  .work__grid { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 8px; }
+  .work__card {
+    border: 1px dashed var(--line); border-radius: 6px; padding: 26px 20px;
+    min-height: 180px; display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .work__card h3 { font-size: 15px; font-weight: 500; }
+  .work__tag { font-family:'JetBrains Mono'; font-size: 11px; color: var(--text-dim); }
+  .work__ph { font-size: 13px; color: var(--text-dim); margin-top: 14px; }
+  @media (max-width: 780px){ .work__grid { grid-template-columns: 1fr; } }
+
+  .work__card--media { padding: 0; overflow: hidden; border-style: solid; }
+  .work__media-frame {
+    position: relative; width: 100%; aspect-ratio: 16 / 9;
+    background: var(--panel-2);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .work__media-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .work__media-frame img {
+    max-width: 100%; max-height: 100%; width: auto; height: auto;
+    object-fit: contain; display: block; margin: auto;
+  }
+  .work__card--media .work__body { padding: 18px 20px; }
+
+  /* ---------- contact ---------- */
+  .contact__panel {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 40px; margin-top: 8px;
+  }
+  .contact__row { display:flex; flex-wrap: wrap; gap: 36px; margin-top: 26px; }
+  .contact__item { min-width: 160px; }
+  .contact__label { font-size: 12px; color: var(--text-dim); font-family:'JetBrains Mono'; margin-bottom: 6px; }
+  .contact__val { font-size: 15px; }
+  .contact__val a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .contact__val a:hover { color: var(--amber); border-color: var(--amber); }
+
+  footer { padding: 40px 32px 60px; text-align: center; color: var(--text-dim); font-size: 13px; }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1);
+  }
+  .reveal.is-visible { opacity: 1; transform: none; }
+  .reveal--delay { transition-delay: .12s; }
+
+  @media (prefers-reduced-motion: reduce){
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__brand"><span class="nav__dot"></span>Eugene Lulu</div>
+    <ul class="nav__links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#work">Work</a></li>
+    </ul>
+    <a class="nav__cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
+
+<div class="pipeline">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="wrap"><div class="wrap-inner">
+      <p class="eyebrow mono">Virtual Assistant — Automation Specialist</p>
+      <h1 class="hero__title">Repetitive tasks, running on their own.</h1>
+      <p class="hero__sub">I'm Eugene — a virtual assistant who builds the workflows, bots, and scripts that take repetitive work off your plate, using UiPath, n8n, and Python. Also flexible with other virtual assistant tasks</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#services">See what I automate</a>
+        <a class="btn btn--ghost" href="#contact">Get in touch</a>
+      </div>
+
+      <div class="hero__diagram">
+        <svg viewBox="0 0 700 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram showing a manual task flowing through an automation core into a task that runs on its own.">
+          <!-- connecting path -->
+          <path id="flowpath" d="M150,110 C220,110 220,110 260,110 C310,110 310,110 350,110 C400,110 420,110 450,110" stroke="#232C38" stroke-width="2" fill="none"/>
+
+          <!-- left node -->
+          <rect x="10" y="80" width="140" height="60" rx="6" fill="#141B24" stroke="#232C38"/>
+          <text x="80" y="105" text-anchor="middle" class="node-label">Manual task</text>
+          <text x="80" y="123" text-anchor="middle" class="node-label strong">Repeated by hand</text>
+
+          <!-- core -->
+          <g transform="translate(305,110)">
+            <polygon points="0,-32 28,-16 28,16 0,32 -28,16 -28,-16" fill="#141B24" stroke="#4FD8C4" stroke-width="1.5"/>
+            <text x="0" y="5" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#4FD8C4">EA</text>
+          </g>
+
+          <!-- right node -->
+          <rect x="450" y="80" width="150" height="60" rx="6" fill="#141B24" stroke="#232C38"/>
+          <text x="525" y="105" text-anchor="middle" class="node-label">Runs on its own</text>
+          <text x="525" y="123" text-anchor="middle" class="node-label strong" fill="#FFB238">Automated</text>
+
+          <!-- pulse dot -->
+          <circle r="4" fill="#FFB238" class="pulse-dot">
+            <animateMotion dur="3.2s" repeatCount="indefinite" path="M150,110 C220,110 220,110 260,110 C310,110 310,110 350,110 C400,110 420,110 450,110"/>
+          </circle>
+        </svg>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <span class="marker"></span>
+    <div class="wrap"><div class="wrap-inner about reveal">
+      <p class="eyebrow mono">About</p>
+      <h2 style="font-size:26px; margin-bottom:18px;">Engineering background, automation instinct.</h2>
+      <p>I'm a fourth-year Electronics Engineering student at the Technological University of the Philippines Manila and a DOST-SEI scholar. Somewhere between debugging circuits and writing bots, I found the part of engineering I like most: taking a process apart, finding where the time is going, and rebuilding it so it doesn't need a human in the loop anymore.</p>
+      <p>As a virtual assistant, that's what I bring to the table — not just task execution, but the instinct to notice when a task shouldn't be manual in the first place, and the tools to fix it. </p>
+      <p> I'm also a very flexible and hardworking individual, ready to learn and adapt at whatever comes.</p>
+      <div class="about__facts">
+        <div>
+          <div class="fact__icon"><!-- Replace with TUP Manila logo PNG --><img src="tup.png" alt="TUP Manila logo"></div>
+          <div class="fact__num">4th year student</div>
+          <div class="fact__label">BS Electronics Engineering, TUP Manila</div>
+        </div>
+        <div>
+          <div class="fact__icon"><!-- Replace with DOST-SEI logo PNG --><img src="dost.png" alt="DOST-SEI logo"></div>
+          <div class="fact__num">RA 7687</div>
+          <div class="fact__label">DOST-SEI scholar</div>
+        </div>
+        <div>
+          <div class="fact__icon"><!-- Replace with FPT Software logo PNG --><img src="fpt.png"FPT Software logo"></div>
+          <div class="fact__num">FPT</div>
+          <div class="fact__label">Former RPA Developer Intern</div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <span class="marker marker--teal"></span>
+    <div class="wrap"><div class="wrap-inner reveal">
+      <p class="eyebrow mono">Services</p>
+      <h2 style="font-size:26px; margin-bottom:8px;">Where I plug in.</h2>
+      <p style="margin-bottom:8px;">Five ways I can take work off your hands — from one-off scripts to fully managed bots.</p>
+    </div></div>
+    <div class="wrap">
+      <div class="services__grid reveal reveal--delay">
+        <div class="service">
+          <svg class="service__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="7" height="7" rx="1"/><rect x="14" y="4" width="7" height="7" rx="1"/><rect x="14" y="15" width="7" height="7" rx="1"/><path d="M10 7.5h4M17.5 11v4"/></svg>
+          <h3>Workflow automation</h3>
+          <p>UiPath and n8n bots that handle data entry, approvals, and reminders end-to-end, so they run without you clicking through them.</p>
+        </div>
+        <div class="service">
+          <svg class="service__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg>
+          <h3>Web &amp; data scraping</h3>
+          <p>Scripts that pull structured data from web sources and drop it straight into your spreadsheets, on whatever schedule you need.</p>
+        </div>
+        <div class="service">
+          <svg class="service__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg>
+          <h3>Reporting &amp; documentation</h3>
+          <p>Automated report generation plus the SOPs and process docs that make sure your systems are maintainable after I hand them over.</p>
+        </div>
+        <div class="service">
+          <svg class="service__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          <h3>Admin &amp; inbox support</h3>
+          <p>Calendar management, email triage, and data entry — handled directly where it makes sense, automated where it doesn't.</p>
+        </div>
+        <div class="service">
+          <svg class="service__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/><circle cx="12" cy="12" r="3.5"/></svg>
+          <h3>Process mapping &amp; optimization</h3>
+          <p>Auditing a manual workflow, documenting it clearly, and redesigning it for fewer steps and fewer errors.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <span class="marker"></span>
+    <div class="wrap"><div class="wrap-inner reveal">
+      <p class="eyebrow mono">Process</p>
+      <h2 style="font-size:26px; margin-bottom:8px;">How a task goes from manual to automated.</h2>
+      <div class="process__list">
+        <div class="step"><div class="step__num">01</div><div><h3>Discover</h3><p>We talk through the task, how often it happens, and where the time is actually going.</p></div></div>
+        <div class="step"><div class="step__num">02</div><div><h3>Map</h3><p>I document the current process step by step, including the edge cases that usually get skipped.</p></div></div>
+        <div class="step"><div class="step__num">03</div><div><h3>Build</h3><p>I develop the bot, script, or workflow — in UiPath, n8n, or Python, depending on what fits.</p></div></div>
+        <div class="step"><div class="step__num">04</div><div><h3>Deploy</h3><p>Tested, documented, and handed over — or left running quietly in the background.</p></div></div>
+        <div class="step"><div class="step__num">05</div><div><h3>Monitor &amp; refine</h3><p>I check in on performance and tune it as your process changes.</p></div></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <span class="marker marker--teal"></span>
+    <div class="wrap"><div class="wrap-inner reveal">
+      <p class="eyebrow mono">Skills</p>
+      <h2 style="font-size:26px; margin-bottom:22px;">The stack.</h2>
+      <div class="skills__grid">
+        <div class="terminal">
+          <div class="terminal__line"><span class="terminal__key">automation</span>: <span class="terminal__val">UiPath (RPA), n8n, data scraping</span></div>
+          <div class="terminal__line"><span class="terminal__key">languages</span>: <span class="terminal__val">Python, HTML &amp; CSS</span></div>
+          <div class="terminal__line"><span class="terminal__key">tools</span>: <span class="terminal__val">Excel, MATLAB &amp; Simulink, Arduino</span></div>
+          <div class="terminal__line"><span class="terminal__key">focus</span>: <span class="terminal__val">embedded systems, IoT prototyping</span></div>
+        </div>
+        <div class="tags">
+          <span class="tag">Technical communication</span>
+          <span class="tag">Peer mentoring</span>
+          <span class="tag">Process mapping</span>
+          <span class="tag">Time management</span>
+          <span class="tag">Event logistics</span>
+          <span class="tag">Problem-solving</span>
+          <span class="tag">Workflow optimization</span>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <span class="marker"></span>
+    <div class="wrap"><div class="wrap-inner reveal">
+      <p class="eyebrow mono">Experience</p>
+      <h2 style="font-size:26px; margin-bottom:24px;">Where this came from.</h2>
+
+      <div class="xp">
+        <div class="xp__head">
+          <div><div class="xp__role">RPA Developer Intern</div><div class="xp__org">FPT Software — Makati, Philippines</div></div>
+          <div class="xp__date">Jun 2026 – Jul 2026</div>
+        </div>
+        <ul>
+          <li>Designed and deployed UiPath workflows to automate repetitive business tasks and cut manual effort.</li>
+          <li>Built data extraction bots that scrape web sources and write structured data straight into Excel.</li>
+          <li>Automated routine data entry and form input, reducing human error on repetitive work.</li>
+          <li>Mapped business processes with technical teams and translated them into working bot logic.</li>
+          <li>Documented project frameworks and bot configurations so the automations stay maintainable.</li>
+        </ul>
+      </div>
+
+      <div class="xp">
+        <div class="xp__head">
+          <div><div class="xp__role">Academics Committee Member</div><div class="xp__org">OECES, TUP Manila</div></div>
+          <div class="xp__date">Aug 2025 – Present</div>
+        </div>
+        <ul>
+          <li>Ran technical review sessions, breaking down complex material for other students.</li>
+          <li>Built and maintained a shared repository of study materials and coursework guides.</li>
+          <li>Organized and led a course-wide event end to end — logistics, program flow, and scheduling.</li>
+        </ul>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work">
+    <span class="marker marker--teal"></span>
+    <div class="wrap"><div class="wrap-inner reveal">
+      <p class="eyebrow mono">Work samples</p>
+      <h2 style="font-size:26px; margin-bottom:8px;">Automations in action.</h2>
+      <p style="margin-bottom:12px;">
+        <a href="https://github.com/oojerboojer/OnlineJobsphScraper">An end-to-end n8n automation</a> that completely streamlines the job hunt. Triggered by a single keyword search, this workflow executes the following pipeline:
+      </p>
+      <ul style="margin: 0 0 24px 0; padding-left: 20px; color: var(--text-dim); font-size: 15px;">
+        <li style="margin-bottom: 8px;"><strong>Data Scraping:</strong> Extracts the Job Description, Type, Wage, and Hours from listings on OnlineJobs.ph.</li>
+        <li style="margin-bottom: 8px;"><strong>AI Analysis:</strong> Uses the Google Gemini API (flash-3.1) to compare the job requirements against my resume (pulled via Google Docs API), generating a custom cover letter and a 1-100% Job Match score.</li>
+        <li style="margin-bottom: 8px;"><strong>Database Logging:</strong> Structures and inputs all extracted data and AI generations directly into a Google Spreadsheet.</li>
+        <li style="margin-bottom: 0;"><strong>Automated Alerts:</strong> Triggers a Discord Webhook to deliver a final summary report the moment the run completes.</li>
+      </ul>
+    </div></div>
+    <div class="wrap">
+      <div class="work__grid reveal reveal--delay">
+        <div class="work__card work__card--media">
+          <div class="work__media-frame">
+            <!-- Actual screen-recording video: keep this as a Drive /preview iframe. -->
+            <iframe src="https://drive.google.com/file/d/1QYLNw_Yo8yp90GE96UTnRKL90jI5vxEB/preview" allow="autoplay" allowfullscreen title="Workflow automation demo video"></iframe>
+          </div>
+          <div class="work__body">
+            <span class="work__tag">ONLINEJOBS.PH SCRAPER</span>
+            <h3 style="margin-top:10px;">Workflow automation demo</h3>
+            <p class="work__ph">Screen recording of my automated job scraper. Takes information from job listings posted on OnlineJobs.ph and inputs the data into a Google Spreadsheet readied by myself.</p>
+          </div>
+        </div>
+
+        <div class="work__card work__card--media">
+          <div class="work__media-frame">
+            <!-- Static screenshot: use an <img> with the Drive thumbnail endpoint, not a /preview iframe. -->
+            <img src="https://drive.google.com/thumbnail?id=1YWB91TpTU2NLVbTs2CHZpUEKtHJpsLXE&sz=w2000" alt="Web scraping to spreadsheet pipeline screenshot">
+          </div>
+          <div class="work__body">
+            <span class="work__tag">SPREADSHEET OUTPUT</span>
+            <h3 style="margin-top:10px;">Web scraping → spreadsheet pipeline</h3>
+            <p class="work__ph">Spreadsheet contains the output of the automation seperated in columns; Job Description, Job Type, Salary, Hours/Week, OnlineJobs.ph link, and and the generated CV. </p>
+          </div>
+        </div>
+
+        <div class="work__card work__card--media">
+          <div class="work__media-frame">
+            <!-- Static screenshot: replace YOUR_FILE_ID with the real Drive file ID for this image. -->
+            <img src="https://drive.google.com/thumbnail?id=1KbDDUgnOTEcSyoN8vS89DH0rels0A52o&sz=w2000" alt="Automated report generator screenshot">
+          </div>
+          <div class="work__body">
+            <span class="work__tag">DISCORD REPORT NOTIFICATION</span>
+            <h3 style="margin-top:10px;">Automated report generator</h3>
+            <p class="work__ph">Upon finishing the workflow, I've linked my Discord webhook to automate a report notification upon completing the workflow. All Automated.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <span class="marker"></span>
+    <div class="wrap"><div class="wrap-inner reveal">
+      <p class="eyebrow mono">Contact</p>
+      <h2 style="font-size:28px; margin-bottom:10px;">Have a task that shouldn't be manual anymore?</h2>
+      <p>Tell me what it is and how often it comes up — I'll tell you honestly whether it's worth automating.</p>
+
+      <div class="contact__panel">
+        <a class="btn btn--primary" href="mailto:eugenelulu12@gmail.com">Email me</a>
+        <div class="contact__row">
+          <div class="contact__item">
+            <div class="contact__label">email</div>
+            <div class="contact__val"><a href="mailto:eugenelulu12@gmail.com">eugenelulu12@gmail.com</a></div>
+          </div>
+          <div class="contact__item">
+            <div class="contact__label">phone</div>
+            <div class="contact__val">+63 917 187 5018</div>
+          </div>
+          <div class="contact__item">
+            <div class="contact__label">based in</div>
+            <div class="contact__val">Las Piñas City, Philippines</div>
+          </div>
+          <div class="contact__item">
+            <div class="contact__label">availability</div>
+            <div class="contact__val">Mon-Sat, from 3 PM PHT</div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+</div><!-- /.pipeline -->
+
+<footer>© 2026 Eugene Amado A. Lulu. Built by hand, kept running by automation.</footer>
+
+<script>
+  // Reveal process steps as they scroll into view
+  const steps = document.querySelectorAll('.step');
+  if ('IntersectionObserver' in window) {
+    const stepIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+    }, { threshold: 0.4 });
+    steps.forEach(s => stepIo.observe(s));
+  } else {
+    steps.forEach(s => s.classList.add('in-view'));
+  }
+
+  // Fade + rise each section's content in as it enters the viewport
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const revealIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          revealIo.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(el => revealIo.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+
+  // Respect reduced motion for the SMIL pulse animation
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('animateMotion').forEach(el => el.remove());
+  }
+</script>
+
+</body>
+</html>
