@@ -509,6 +509,62 @@
     </div>
   </section>
 
+ <section id="work-gmail">
+    <span class="marker marker--teal"></span>
+    <div class="wrap"><div class="wrap-inner reveal">
+      <p class="eyebrow mono">Work samples</p>
+      <h2 style="font-size:26px; margin-bottom:8px;">AI Email Triage & Auto-Drafting.</h2>
+      <p style="margin-bottom:12px;">
+        <a href="https://github.com/oojerboojer/AIEmailAgent">An n8n inbox automation</a> that functions as an executive assistant. Triggered automatically, this workflow categorizes incoming emails and executes the following pipeline:
+      </p>
+      <ul style="margin: 0 0 24px 0; padding-left: 20px; color: var(--text-dim); font-size: 15px;">
+        <li style="margin-bottom: 8px;"><strong>Automated Polling:</strong> Scans the Gmail inbox every minute specifically targeting unread messages.</li>
+        <li style="margin-bottom: 8px;"><strong>AI Triage:</strong> Uses the Gemini model (gemini-3.1-flash-lite) to generate a 2-sentence summary, identify the core request, determine urgency (High, Medium, Low), and write a professional draft reply  .</li>
+        <li style="margin-bottom: 8px;"><strong>Conditional Routing:</strong> Evaluates the AI's urgency score to route the email  . It automatically marks "Low" urgency messages as read immediately  . For "Medium" or "High" urgency emails, it creates a formatted Gmail draft directly in the thread  .</li>
+        <li style="margin-bottom: 0;"><strong>Discord Alerts:</strong> Triggers specific Discord webhooks to send summary notifications detailing the sender, subject, and whether the email was marked as read or a response was drafted  .</li>
+      </ul>
+    </div></div>
+    <div class="wrap">
+      <div class="work__grid reveal reveal--delay">
+        <div class="work__card work__card--media">
+          <div class="work__media-frame">
+            <!-- Replace with actual screen-recording or iframe -->
+            <img src="screenshot-workflow.png" alt="Inbox polling and AI triage">
+          </div>
+          <div class="work__body">
+            <span class="work__tag">AI INBOX ASSISTANT</span>
+            <h3 style="margin-top:10px;">Automated polling & AI triage</h3>
+            <p class="work__ph">Fetches unread emails every minute and passes them to Gemini to extract a summary, an urgency level, and a context-aware draft reply  .</p>
+          </div>
+        </div>
+
+        <div class="work__card work__card--media">
+          <div class="work__media-frame">
+            <!-- Replace with actual screenshot of the logic routing -->
+            <img src="screenshot-if.png" alt="Conditional routing pipeline">
+          </div>
+          <div class="work__body">
+            <span class="work__tag">LOGIC ROUTING</span>
+            <h3 style="margin-top:10px;">Urgency-based routing</h3>
+            <p class="work__ph">Uses an IF node to parse the AI's JSON output  . Low-priority emails are immediately marked as read to clear clutter, while important emails get a pre-written draft attached to the thread  .</p>
+          </div>
+        </div>
+
+        <div class="work__card work__card--media">
+          <div class="work__media-frame">
+            <!-- Replace with actual screenshot of Discord notifications -->
+            <img src="discord-notif.png"Discord notification alerts">
+          </div>
+          <div class="work__body">
+            <span class="work__tag">DISCORD WEBHOOKS</span>
+            <h3 style="margin-top:10px;">Real-time status alerts</h3>
+            <p class="work__ph">Sends a customized payload to a Discord server containing the subject line, sender, and action taken (Read vs. Drafted) so I stay updated without manually checking the inbox  .</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- CONTACT -->
   <section id="contact">
     <span class="marker"></span>
